@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-error
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "observability"
+        effect: "NoSchedule"
+      containers:
+      - name: nginx
+        image: nginxtestestes
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "0.1m"
+        ports:
+        - containerPort: 80

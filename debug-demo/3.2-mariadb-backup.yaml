@@ -1,0 +1,10 @@
+---
+## Operator from https://operatorhub.io/operator/mariadb-operator-app
+apiVersion: mariadb.persistentsys/v1alpha1
+kind: Backup
+metadata:
+  name: mariadb-backup
+spec:
+  backupPath: /mnt/backup
+  backupSize: 1Gi
+  schedule: 0 0 * * *

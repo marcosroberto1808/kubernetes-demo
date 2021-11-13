@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: robertom-playground-ns
+  labels:
+    istio.io/rev: 1-6-14
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mywebsite-app
+  namespace: robertom-playground-ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mywebsite-app
+  template:
+    metadata:
+      labels:
+        app: mywebsite-app
+        version: "1.1"
+    spec:
+      containers:
+        - name: mywebsite-app
+#          image: mroberto1808/nginx:1.1
+          image: gcr.io/google-samples/hello-app:1.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mywebsite-svc
+  namespace: robertom-playground-ns
+spec:
+  selector:
+    app: mywebsite-app
+  ports:
+    - name: http-mywebsite
+      port: 80
+      targetPort: 8080
+      protocol: TCP
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: mywebsite-vs
+  namespace: robertom-playground-ns
+spec:
+  hosts:
+    - "robertom-playground-us-west-2-mesh-internal.dev.cwp.hpicorp.net"
+  gateways:
+    - istio-system/internal-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /website
+      route:
+        - destination:
+            host: mywebsite-svc.robertom-playground-ns.svc.cluster.local
+            port:
+              number: 80
+---
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: mywebsite-app
+  namespace: robertom-playground-ns
+spec:
+  mtls:
+    mode: STRICT
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: mywebsite-dr
+  namespace: robertom-playground-ns
+spec:
+  host: mywebsite-svc.robertom-playground-ns.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL

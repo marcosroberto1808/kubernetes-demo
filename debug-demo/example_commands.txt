@@ -1,0 +1,67 @@
+# Application Introspection and Debugging
+kubectl get pods
+kubectl describe pod nginx-deployment-1006230814-6winp
+kubectl get events
+kubectl get events --namespace=my-namespace
+kubectl get pod nginx-deployment-1006230814-6winp -o yaml
+kubectl get nodes
+kubectl describe node kubernetes-node-861h
+kubectl get node kubernetes-node-861h -o yaml
+
+# Debug Pods and ReplicationControllers
+kubectl get nodes -o yaml | egrep '\sname:|cpu:|memory:'
+kubectl get nodes -o json | jq '.items[] | {name: .metadata.name, cap: .status.capacity}'
+kubectl describe rc ${CONTROLLER_NAME}
+
+# Debug Running Pods
+kubectl logs ${POD_NAME} ${CONTAINER_NAME}
+kubectl logs --previous ${POD_NAME} ${CONTAINER_NAME}
+kubectl exec ${POD_NAME} -c ${CONTAINER_NAME} -- ${CMD} ${ARG1} ${ARG2} ... ${ARGN}
+kubectl exec cassandra -- cat /var/log/cassandra/system.log
+kubectl exec -it cassandra -- sh
+kubectl run ephemeral-demo --image=k8s.gcr.io/pause:3.1 --restart=Never
+kubectl exec -it ephemeral-demo -- sh
+kubectl debug -it ephemeral-demo --image=busybox --target=ephemeral-demo
+kubectl describe pod ephemeral-demo
+kubectl delete pod ephemeral-demo
+kubectl run myapp --image=busybox --restart=Never -- sleep 1d
+kubectl debug myapp -it --image=ubuntu --share-processes --copy-to=myapp-debug
+kubectl delete pod myapp myapp-debug
+kubectl run --image=busybox myapp -- false
+kubectl run myapp --image=busybox --restart=Never -- sleep 1d
+kubectl debug myapp --copy-to=myapp-debug --set-image=*=ubuntu
+kubectl delete pod myapp myapp-debug
+kubectl debug node/mynode -it --image=ubuntu
+kubectl delete pod node-debugger-mynode-pdx84
+
+# Debug Services
+kubectl run -it --rm --restart=Never busybox --image=gcr.io/google-containers/busybox sh
+kubectl exec <POD-NAME> -c <CONTAINER-NAME> -- <COMMAND>
+kubectl create deployment hostnames --image=k8s.gcr.io/serve_hostname
+kubectl scale deployment hostnames --replicas=3
+kubectl get pods -l app=hostnames
+kubectl get pods -l app=hostnames \
+    -o go-template='{{range .items}}{{.status.podIP}}{{"\n"}}{{end}}'
+
+for ep in 10.244.0.5:9376 10.244.0.6:9376 10.244.0.7:9376; do
+    wget -qO- $ep
+done
+kubectl logs
+
+wget -O- hostnames
+kubectl get svc hostnames
+kubectl expose deployment hostnames --port=80 --target-port=9376
+kubectl get svc hostnames
+nslookup hostnames
+nslookup hostnames.default
+nslookup hostnames.default.svc.cluster.local
+nslookup hostnames.default.svc.cluster.local 10.0.0.10
+cat /etc/resolv.conf
+nslookup kubernetes.default
+kubectl get service hostnames -o json
+kubectl get pods -l app=hostnames
+kubectl get endpoints hostnames
+for ep in 172.17.0.4:9376 172.17.0.5:9376 172.17.0.6:9376; do
+    wget -qO- $ep
+done
+ps auxw | grep kube-proxy

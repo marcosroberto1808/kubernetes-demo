@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: distroless
+  name: distroless
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: distroless
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: distroless
+    spec:
+      containers:
+      - image: k8s.gcr.io/pause:3.1
+        name: pause
+        resources: {}
+status: {}

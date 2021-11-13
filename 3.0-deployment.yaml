@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mywebsite-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mywebsite-app
+  template:
+    metadata:
+      labels:
+        app: mywebsite-app
+    spec:
+      containers:
+        - name: mywebsite-app
+          image: mroberto1808/nginx:1.0
+          volumeMounts:
+            - mountPath: /home/mywebsite-app
+              name: mywebsite-dir
+            - mountPath: /home/mywebsite-app/1.txt
+              name: mywebsite-file
+      volumes:
+        - name: mywebsite-dir
+          hostPath:
+            # Ensure the file directory is created.
+            path: /home/vagrant/projects/kubernetes-data/mywebsite-app
+            type: DirectoryOrCreate
+        - name: mywebsite-file
+          hostPath:
+            path: /home/vagrant/projects/kubernetes-data/mywebsite-app/1.txt
+            type: FileOrCreate

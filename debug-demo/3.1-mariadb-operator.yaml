@@ -1,0 +1,16 @@
+---
+## Operator from https://operatorhub.io/operator/mariadb-operator-app
+apiVersion: mariadb.persistentsys/v1alpha1
+kind: MariaDB
+metadata:
+  name: mariadb
+spec:
+  database: test-db
+  username: db-user
+  password: db-user
+  rootpwd: password
+  size: 1
+  image: 'mariadb/server:10.3'
+  dataStoragePath: /mnt/data
+  dataStorageSize: 1Gi
+

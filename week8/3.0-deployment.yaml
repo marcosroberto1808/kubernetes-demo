@@ -1,0 +1,19 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mywebsite-dp
+  namespace: robertom-kubernetes-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mywebsite-app
+  template:
+    metadata:
+      labels:
+        app: mywebsite-app
+    spec:
+      containers:
+        - name: mywebsite-app
+          image: mroberto1808/nginx:1.0

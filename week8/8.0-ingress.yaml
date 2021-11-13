@@ -1,0 +1,23 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx-internal
+    nginx.ingress.kubernetes.io/backend-protocol: HTTP
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  labels:
+    app.kubernetes.io/instance: mywebsite-app
+  name: mywebsite-app
+  namespace: robertom-kubernetes-demo
+spec:
+  rules:
+    - host: mywebsite-app-robertom-playground-us-west-2.dev.cwp.hpicorp.net
+      http:
+        paths:
+          - backend:
+              serviceName: mywebsite-app
+              servicePort: 80
+            path: /
+            pathType: Prefix
