@@ -6,7 +6,7 @@ metadata:
   namespace: robertom-kubernetes-demo
 spec:
   selector:
-    app: mywebsite-dp
+    app: mywebsite-app
   ports:
     - name: http
       port: 80

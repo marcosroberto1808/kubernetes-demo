@@ -17,7 +17,7 @@ spec:
       http:
         paths:
           - backend:
-              serviceName: mywebsite-app
+              serviceName: mywebsite-svc
               servicePort: 80
             path: /
             pathType: Prefix

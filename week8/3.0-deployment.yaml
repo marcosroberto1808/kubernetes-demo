@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mywebsite-dp
+  name: mywebsite-app
   namespace: robertom-kubernetes-demo
 spec:
   replicas: 1
@@ -16,4 +16,4 @@ spec:
     spec:
       containers:
         - name: mywebsite-app
-          image: mroberto1808/nginx:1.0
+          image: mroberto1808/nginx:1.1
